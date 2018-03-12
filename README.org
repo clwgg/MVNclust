@@ -1,0 +1,113 @@
+* MVNclust
+** About
+
+MVNclust implements clustering of numerical data in higher dimensions using
+multivariate Gaussian mixtures. This implementation uses mixture components
+with equal volume, which may differ in shape and orientation. This is achieved
+using eigenvalue decomposition of the covariance matrix following [[https://www.sciencedirect.com/science/article/pii/0031320394001256][Celeux and Covaert, Pattern Recognition, 1995]].
+
+
+MVNclust uses an Expectation-Maximization (EM-) algorithm to maximize the
+likelihood of a multivariate Gaussian Mixture Model with a predefined number of
+mixture components. It returns the parameters of the mixture components, the
+maximized log-likelihood, and Bayes Information Criterion (BIC) to allow for
+comparison between iterations which differ in the number of mixture components.
+
+
+MVNclust heavily uses the GNU Scientific Library (GSL), primarily for linear algebra tasks.
+
+It also includes a simulator of data from multivariate Gaussian mixtures, primarily
+for testing purposes.
+
+Please note that this is primarily an experimental repository, not intended for
+production use.
+
+** Get it
+
+Clone the repository recursively:
+
+#+BEGIN_SRC bash
+git clone --recursive https://github.com/clwgg/MVNclust
+#+END_SRC
+
+This will clone both the MVNclust code, as well as the GNU Scientific Library,
+which is its only external dependency. After cloning, first compile
+the submodule, and then the MVNclust code:
+
+#+BEGIN_SRC bash
+cd MVNclust
+make submodules
+make
+#+END_SRC
+
+This will create the mvnclust binary, which you can copy or move
+anywhere for subsequent use.
+
+*** Updating
+
+When updating to the current version, please make sure to also update the
+submodules:
+
+#+BEGIN_SRC bash
+git pull origin master
+git submodule update
+make submodules
+make
+#+END_SRC
+
+** Usage
+
+#+BEGIN_SRC bash
+
+Usage: ./mvnclust [options] file.tsv
+
+Options:
+        -k      Number of clusters (default: k = 2)
+
+        -a      File name for cluster assignment results (optional)
+
+        -s      Simulate -s samples from a -d dimensional mixture of -k clusters (triggers simulation over EM)
+        -d      Number of dimensions for simulation (only useful with -s)
+
+        -v      Set verbosity - {0, 1, 2} (default 0)
+
+#+END_SRC
+
+The input file should be tab-separated, with one sample per row and one
+dimension per column.
+
+The ~-k~ flag controls the number of mixture components (clusters) which will be
+used.
+
+~-a~ allows the output of a file with cluster assignments (first column) and
+uncertainty estimates (second column) of each data point (rows) in the input.
+
+~-s~ and ~-d~ are used for simulation and control the number of data points and
+dimensions, respectively. In the case of simulation, ~-k~ controls the number of
+mixture components to simulate, and ~file.tsv~ is the output file for simulated
+data.
+
+~-v~ controls the verbosity of the output.
+
+*** Examples
+
+Cluster input in three dimensions:
+#+BEGIN_SRC bash
+
+./mvnclust -k 3 infile.tsv
+
+#+END_SRC
+
+Cluster input in three dimensions, with higher verbosity and assignment output file:
+#+BEGIN_SRC bash
+
+./mvnclust -k 3 -v 1 -a assignments.tsv infile.tsv
+
+#+END_SRC
+
+Simulate 1000 data points of a 8 dimensional mixture with 4 components:
+#+BEGIN_SRC bash
+
+./mvnclust -k 4 -s 1000 -d 8 outfile.tsv
+
+#+END_SRC

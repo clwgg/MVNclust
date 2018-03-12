@@ -1,0 +1,3 @@
+[submodule "gsl"]
+	path = gsl
+	url = git://git.savannah.gnu.org/gsl.git

@@ -24,23 +24,56 @@ production use.
 
 ** Get it
 
-Clone the repository recursively:
+There are two ways to compile MVNclust, depending on whether the =GSL= is available as
+a system library at version \ge 2.3.
+
+If on a Ubuntu style system, you can run:
+
+#+BEGIN_SRC bash
+apt search libgsl-dev
+#+END_SRC
+
+If =libgsl= is available and at version \ge 2.3 and you have =root= permissions on the system, you can run:
+
+#+BEGIN_SRC bash
+sudo apt install libgsl-dev
+#+END_SRC
+
+to install the library. If this is successful, you can clone this repository,
+and make the =mvnclust= binary using the shared library:
+
+#+BEGIN_SRC bash
+git clone https://github.com/clwgg/MVNclust
+
+cd MVNclust
+make shared
+#+END_SRC
+
+
+Alternatively, if the required version of the =GSL= is not available, you do not
+have root permissions, or you would like to compile a =mvnclust= binary that includes
+the =GSL= code statically, for example to share it with a system where the
+system library is not installed, you can use the version of =GSL= included as a submodule.
+
+For that, clone the repository recursively:
 
 #+BEGIN_SRC bash
 git clone --recursive https://github.com/clwgg/MVNclust
 #+END_SRC
 
-This will clone both the MVNclust code, as well as the GNU Scientific Library,
-which is its only external dependency. After cloning, first compile
-the submodule, and then the MVNclust code:
+This will clone both the MVNclust code, as well as the =GSL=. Please note,
+that you will need =libtool= installed to compile the library, along with
+the regular GNU toolchain for compilation.
+
+After cloning, first compile the submodule, and then the MVNclust code:
 
 #+BEGIN_SRC bash
 cd MVNclust
 make submodules
-make
+make static
 #+END_SRC
 
-This will create the mvnclust binary, which you can copy or move
+This will create the static =mvnclust= binary, which you can copy or move
 anywhere for subsequent use.
 
 *** Updating
